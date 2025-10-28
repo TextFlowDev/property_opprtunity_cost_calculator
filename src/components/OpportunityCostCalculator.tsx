@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import InputSection from './InputSection';
 import ResultsSection from './ResultsSection';
+import SavedCalculationsPanel from './SavedCalculationsPanel';
 import { calculateOpportunityCost, CalculationResults } from '../utils/calculations';
-import { 
-  validateMonthlyRent, 
-  validateMonthsRenting, 
-  validatePropertyPrice 
-} from '../utils/validators';
+import { useLanguage } from '../context/LanguageContext';
+import { useSavedCalculations, SavedCalculation } from '../hooks/useSavedCalculations';
 
 const OpportunityCostCalculator: React.FC = () => {
+  const { t } = useLanguage();
+  const { saveCalculation } = useSavedCalculations();
+  
   // State management
   const [inputs, setInputs] = useState({
     monthlyRent: '',
@@ -27,19 +28,44 @@ const OpportunityCostCalculator: React.FC = () => {
   const [isCalculating, setIsCalculating] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
-  // Validate single input
+  // Validate single input with translations
   const validateInput = (name: string, value: string): boolean => {
     let error = '';
+    const num = Number(value);
     
     switch(name) {
       case 'monthlyRent':
-        error = validateMonthlyRent(value) || '';
+        if (!value || value === '') {
+          error = t.errors.required;
+        } else if (isNaN(num)) {
+          error = t.errors.invalidNumber;
+        } else if (num < 500) {
+          error = t.errors.minRent;
+        } else if (num > 10000) {
+          error = t.errors.maxRent;
+        }
         break;
       case 'monthsRenting':
-        error = validateMonthsRenting(value) || '';
+        if (!value || value === '') {
+          error = t.errors.required;
+        } else if (isNaN(num)) {
+          error = t.errors.invalidNumber;
+        } else if (num < 1) {
+          error = t.errors.minMonths;
+        } else if (num > 120) {
+          error = t.errors.maxMonths;
+        }
         break;
       case 'propertyPrice':
-        error = validatePropertyPrice(value) || '';
+        if (!value || value === '') {
+          error = t.errors.required;
+        } else if (isNaN(num)) {
+          error = t.errors.invalidNumber;
+        } else if (num < 150000) {
+          error = t.errors.minPrice;
+        } else if (num > 1000000) {
+          error = t.errors.maxPrice;
+        }
         break;
       default:
         break;
@@ -130,6 +156,44 @@ const OpportunityCostCalculator: React.FC = () => {
     }, 800);
   };
 
+  // Handle save calculation
+  const handleSaveCalculation = () => {
+    if (results) {
+      try {
+        saveCalculation(
+          {
+            monthlyRent: Number(inputs.monthlyRent),
+            monthsRenting: Number(inputs.monthsRenting),
+            propertyPrice: Number(inputs.propertyPrice)
+          },
+          results
+        );
+        alert(t.saveLoad.save + ' ✓');
+      } catch (error) {
+        alert('Failed to save calculation');
+      }
+    }
+  };
+
+  // Handle load calculation
+  const handleLoadCalculation = (calculation: SavedCalculation) => {
+    setInputs({
+      monthlyRent: calculation.inputs.monthlyRent.toString(),
+      monthsRenting: calculation.inputs.monthsRenting.toString(),
+      propertyPrice: calculation.inputs.propertyPrice.toString()
+    });
+    setResults(calculation.results);
+    setShowResults(true);
+    
+    // Scroll to results
+    setTimeout(() => {
+      const resultsElement = document.getElementById('results-section');
+      if (resultsElement) {
+        resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
+
   // Handle reset
   const handleReset = () => {
     setInputs({
@@ -159,6 +223,9 @@ const OpportunityCostCalculator: React.FC = () => {
 
   return (
     <div className="opportunity-cost-calculator max-w-4xl mx-auto px-4 py-8 md:py-12">
+      {/* Saved Calculations Panel */}
+      <SavedCalculationsPanel onLoadCalculation={handleLoadCalculation} />
+
       {/* Header */}
       <motion.div 
         className="text-center mb-8"
@@ -166,11 +233,11 @@ const OpportunityCostCalculator: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
-          🔥 Berapa Anda Rugi Dengan Menyewa?
+        <h1 className="text-4xl md:text-5xl font-bold text-white dark:text-gray-100 mb-4 drop-shadow-lg">
+          {t.header.title}
         </h1>
-        <p className="text-lg md:text-xl text-white drop-shadow">
-          Kira sekarang dan lihat berapa banyak peluang kekayaan yang anda lepaskan!
+        <p className="text-lg md:text-xl text-white dark:text-gray-200 drop-shadow">
+          {t.header.subtitle}
         </p>
       </motion.div>
 
@@ -195,6 +262,8 @@ const OpportunityCostCalculator: React.FC = () => {
         <ResultsSection
           results={results}
           onReset={handleReset}
+          onSave={handleSaveCalculation}
+          inputs={inputs}
         />
       )}
     </div>

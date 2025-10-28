@@ -1,11 +1,21 @@
 import React from 'react';
+import { LanguageProvider } from './context/LanguageContext';
+import { ThemeProvider } from './context/ThemeContext';
 import OpportunityCostCalculator from './components/OpportunityCostCalculator';
+import LanguageToggle from './components/LanguageToggle';
+import ThemeToggle from './components/ThemeToggle';
+import ComparisonMode from './components/ComparisonMode';
 import './index.css';
 
 function App() {
   return (
-    <div className="App min-h-screen">
-      <OpportunityCostCalculator />
+    <ThemeProvider>
+      <LanguageProvider>
+        <div className="App min-h-screen bg-gradient-to-br from-purple-600 via-blue-500 to-purple-700 dark:from-gray-900 dark:via-gray-800 dark:to-black transition-colors duration-300">
+          <LanguageToggle />
+          <ThemeToggle />
+          <ComparisonMode />
+          <OpportunityCostCalculator />
       
       {/* Optional: Registration Form Section */}
       <div id="registration-form" className="max-w-4xl mx-auto px-4 py-16">
@@ -48,13 +58,15 @@ function App() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="text-center text-white py-8">
-        <p className="text-sm opacity-80">
-          © 2025 Opportunity Cost Calculator. Semua hak terpelihara.
-        </p>
-      </footer>
-    </div>
+        {/* Footer */}
+        <footer className="text-center text-white dark:text-gray-300 py-8">
+          <p className="text-sm opacity-80">
+            © 2025 Kun Property Seminar | Win Society Group | All Rights Reserved.
+          </p>
+        </footer>
+        </div>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }
 

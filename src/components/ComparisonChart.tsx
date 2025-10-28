@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { formatNumber } from '../utils/formatters';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ComparisonChartProps {
   rentScenario: number;
@@ -13,14 +14,16 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({
   buyScenario,
   monthsRenting 
 }) => {
+  const { t } = useLanguage();
+  
   const data = [
     {
-      name: 'Terus Sewa',
+      name: t.results.rentScenario,
       wealth: -rentScenario, // Negative to show loss
       displayValue: rentScenario
     },
     {
-      name: 'Beli Rumah',
+      name: t.results.buyScenario,
       wealth: buyScenario,
       displayValue: buyScenario
     }
@@ -46,7 +49,7 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({
   return (
     <div className="chart-container bg-white p-6 rounded-xl shadow-lg">
       <h4 className="text-xl font-bold text-gray-800 mb-4 text-center">
-        Perbandingan Kekayaan Selepas {monthsRenting} Bulan
+        {t.results.chartTitle}
       </h4>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -77,11 +80,11 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({
       <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
         <div className="flex items-center justify-center">
           <div className="w-4 h-4 bg-danger rounded mr-2"></div>
-          <span className="text-gray-600">Kerugian (Sewa)</span>
+          <span className="text-gray-600">{t.results.rentScenario}</span>
         </div>
         <div className="flex items-center justify-center">
           <div className="w-4 h-4 bg-success rounded mr-2"></div>
-          <span className="text-gray-600">Keuntungan (Beli)</span>
+          <span className="text-gray-600">{t.results.buyScenario}</span>
         </div>
       </div>
     </div>

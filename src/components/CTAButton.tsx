@@ -1,6 +1,8 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 const CTAButton: React.FC = () => {
+  const { t } = useLanguage();
   const handleClick = () => {
     // Track analytics event
     if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -29,7 +31,7 @@ const CTAButton: React.FC = () => {
       onClick={handleClick}
       className="w-full py-5 px-8 text-lg md:text-xl font-bold text-white bg-success hover:bg-green-600 rounded-xl transition-all transform hover:scale-105 shadow-2xl animate-pulse-glow"
     >
-      🚨 SAYA TAK NAK RUGI LAGI - DAFTAR WEBINAR SEKARANG!
+      {t.cta.button}
     </button>
   );
 };

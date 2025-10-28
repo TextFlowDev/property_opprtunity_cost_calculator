@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface InputSectionProps {
   inputs: {
@@ -25,6 +26,8 @@ const InputSection: React.FC<InputSectionProps> = ({
   isCalculating,
   isValid
 }) => {
+  const { t } = useLanguage();
+  
   const formatInputValue = (value: string): string => {
     // Remove non-numeric characters
     const numericValue = value.replace(/[^0-9]/g, '');
@@ -39,11 +42,11 @@ const InputSection: React.FC<InputSectionProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8">
       {/* Input Field 1: Monthly Rent */}
       <div className="mb-6">
-        <label htmlFor="monthlyRent" className="block text-sm font-semibold text-gray-700 mb-2">
-          💰 Sewa Bulanan Anda (RM)
+        <label htmlFor="monthlyRent" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          💰 {t.input.monthlyRent.label} (RM)
         </label>
         <input
           type="text"
@@ -51,11 +54,11 @@ const InputSection: React.FC<InputSectionProps> = ({
           name="monthlyRent"
           value={inputs.monthlyRent ? formatInputValue(inputs.monthlyRent) : ''}
           onChange={(e) => handleInputChange('monthlyRent', e.target.value)}
-          placeholder="Contoh: 1,200"
-          className={`w-full px-4 py-3 text-lg border-2 rounded-lg focus:outline-none transition-colors ${
+          placeholder={t.input.monthlyRent.placeholder}
+          className={`w-full px-4 py-3 text-lg border-2 rounded-lg focus:outline-none transition-colors dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 ${
             errors.monthlyRent 
               ? 'border-danger focus:border-danger' 
-              : 'border-gray-300 focus:border-primary'
+              : 'border-gray-300 dark:border-gray-600 focus:border-primary'
           }`}
         />
         {errors.monthlyRent && (
@@ -66,7 +69,7 @@ const InputSection: React.FC<InputSectionProps> = ({
       {/* Input Field 2: Months Renting */}
       <div className="mb-6">
         <label htmlFor="monthsRenting" className="block text-sm font-semibold text-gray-700 mb-2">
-          📅 Berapa Lama Anda Dah Sewa? (bulan)
+          📅 {t.input.monthsRenting.label}
         </label>
         <input
           type="number"
@@ -74,7 +77,7 @@ const InputSection: React.FC<InputSectionProps> = ({
           name="monthsRenting"
           value={inputs.monthsRenting}
           onChange={(e) => onChange('monthsRenting', e.target.value)}
-          placeholder="Contoh: 24"
+          placeholder={t.input.monthsRenting.placeholder}
           min="1"
           max="120"
           className={`w-full px-4 py-3 text-lg border-2 rounded-lg focus:outline-none transition-colors ${
@@ -91,7 +94,7 @@ const InputSection: React.FC<InputSectionProps> = ({
       {/* Input Field 3: Property Price */}
       <div className="mb-6">
         <label htmlFor="propertyPrice" className="block text-sm font-semibold text-gray-700 mb-2">
-          🏠 Harga Rumah Tipikal Di Area Anda (RM)
+          🏠 {t.input.propertyPrice.label} (RM)
         </label>
         <input
           type="text"
@@ -99,7 +102,7 @@ const InputSection: React.FC<InputSectionProps> = ({
           name="propertyPrice"
           value={inputs.propertyPrice ? formatInputValue(inputs.propertyPrice) : ''}
           onChange={(e) => handleInputChange('propertyPrice', e.target.value)}
-          placeholder="Contoh: 350,000"
+          placeholder={t.input.propertyPrice.placeholder}
           className={`w-full px-4 py-3 text-lg border-2 rounded-lg focus:outline-none transition-colors ${
             errors.propertyPrice 
               ? 'border-danger focus:border-danger' 
@@ -124,10 +127,10 @@ const InputSection: React.FC<InputSectionProps> = ({
         {isCalculating ? (
           <span className="flex items-center justify-center">
             <span className="spinner mr-2"></span>
-            MENGIRA...
+            {t.input.calculating}
           </span>
         ) : (
-          '🔥 KIRA KERUGIAN SAYA SEKARANG!'
+          `🔥 ${t.input.calculateButton}`
         )}
       </button>
     </div>
